@@ -3,7 +3,7 @@ from scipy import linalg as lg
 import warnings
 
 
-def HBr(example, q,p,q0_t,c):
+def HBr(example, q, p, q0_t, c):
     C = 1
     return c/(2*q0_t**(c+1)) * np.dot(p, p) + C * c * q0_t ** (2*c-1) * example.f(q)
 
@@ -48,10 +48,36 @@ def NAG(example, mu, dt, steps):
     return np.array(X)
 
 
-
-def HTVI_adap(example, order, dt, steps, init):
+def HTVI_d(example, c, dt, steps, init):
+    x0, x0_t, p0, p0_t = init
     C = 1
-    c = order
+    q0 = x0
+    q0_t =x0_t
+    #q0 = example.x0
+    #q0_t = 0.01#np.random.rand(q0.shape[0])
+    #p0 = np.zeros(q0.shape)
+    #p0_t = -HBr(example, q0, p0, q0_t, order) #np.zeros(q0.shape)
+    X = []
+    X.append(q0)
+    for t in range(steps-1):
+        p1 = p0 - c * dt * C * (q0_t) ** (2*c-1) * example.gradf(q0)
+        p1_t = p0_t + dt * c * (c+1)/(2 * (q0_t) ** (c+2)) * np.dot(p1, p1) \
+               - dt * C * c * (2*c-1) * (q0_t) ** (2*c-2) * example.f(q0)
+        q1 = q0 + dt * c / (q0_t) ** (c+1) * p1
+        q1_t = q0_t + dt
+
+        p0 = np.copy(p1)
+        p0_t = np.copy(p1_t)
+        q0 = np.copy(q1)
+        q0_t = np.copy(q1_t)
+
+        X.append(q0)
+    return np.array(X)
+
+
+def HTVI_adap(example, c, dt, steps, init):
+    C = 1
+    #c = 2
     cdot = 0.5
     x0, x0_t, p0, p0_t = init
     q0 = x0
@@ -75,10 +101,9 @@ def HTVI_adap(example, order, dt, steps, init):
     return np.array(X)
 
 
-def Bet_dir(example, order, dt, steps, init):
+def Bet_dir(example, c, dt, steps, init):
     x0, p0, p0_t = init
     C = 1
-    c = order
     q0 = x0
     X = []
     X.append(q0)
@@ -112,7 +137,7 @@ def eb(t, c, C):
     return np.exp(C) * t ** c
 
 
-def step_Br(example, dt, p, x, t, params):
+def step_Br(example, dt, p, x, t, params, kinetic):
     v, m, c, C = params
     # dt/2 t
     t += dt / 2
@@ -127,9 +152,14 @@ def step_Br(example, dt, p, x, t, params):
     # dt/2 C
     p = - ea(c, t) * eb(t, c, C) * example.gradf(x) * dt/2 + p
 
-    # dt A # Relativistic
-    sq = np.sqrt(v ** 2 * m ** 2 + np.sum(p**2))
-    x = (ea(c, t) * v * p / sq) * dt + x
+    # dt A
+    if kinetic == 'Quadratic':
+        x = ea(c, t) * p * dt + x
+
+    else: # Relativistic
+        sq = np.sqrt(v ** 2 * m ** 2 + np.sum(p ** 2))
+        x = (ea(c, t) * v * p / sq) * dt + x
+
 
     # dt/2 C
     p = - ea(c, t) * eb(t, c, C) * example.gradf(x) * dt/2 + p
@@ -146,15 +176,20 @@ def step_Br(example, dt, p, x, t, params):
     return (p, x, t)
 
 
-def step_Br_adap(example, dt, p, x, t, params):
+def step_Br_adap(example, dt, p, x, t, params, kinetic):
     v, m, c, C = params
     # dt/2 t
-    #T = eb(t, c, C)  # np.exp(C) * t ** c
-    #arg = T + dt/2
-    #t = (np.exp(-C)*arg)**(1/c)
-    t=1e-4
+    # T = eb(t, 2, C)  # np.exp(C) * t ** c
+    # arg = T + dt/2
+    # t = (np.exp(-C)*arg)**(1/2)
+
+    T = eb(t, c, C)  # np.exp(C) * t ** c
+    arg = T + dt/2
+    t = (np.exp(-C)*arg)**(1/c)
+
     # dt/2 D
     p = p * np.exp(-ea(c, t) * dt / 2) #c/t
+
     # dt/2 B
     p = p * np.exp(ea(c, t) * dt/2)
     x = x * np.exp(-ea(c, t) * dt/2)
@@ -162,9 +197,13 @@ def step_Br_adap(example, dt, p, x, t, params):
     # dt/2 C
     p = - ea(c, t) * eb(t, c, C) * example.gradf(x) * dt/2 + p
 
-    # dt A # Relativistic
-    sq = np.sqrt(v ** 2 * m ** 2 + np.sum(p**2))
-    x = (ea(c, t) * v * p / sq) * dt + x
+    if kinetic == 'Quadratic':
+        x = ea(c, t) * p * dt + x
+
+    else:  # Relativistic
+        sq = np.sqrt(v ** 2 * m ** 2 + np.sum(p ** 2))
+        x = (ea(c, t) * v * p / sq) * dt + x
+
 
     # dt/2 C
     p = - ea(c, t) * eb(t, c, C) * example.gradf(x) * dt/2 + p
@@ -177,11 +216,60 @@ def step_Br_adap(example, dt, p, x, t, params):
     p = p * np.exp(-ea(c, t) * dt / 2)
 
     # dt/2 t
-   # T = eb(t, c, C)
-   # arg = T + dt/2
-   # t = (np.exp(-C) * arg) ** (1 / c)
+    # T = eb(t, 2, C)
+    # arg = T + dt/2
+    # t = (np.exp(-C) * arg) ** (1 / 2)
+
+    T = eb(t, c, C)
+    arg = T + dt/2
+    t = (np.exp(-C) * arg) ** (1 / c)
 
     return (p, x,t)
+
+
+def step_Br_adap_new(example, dt, p, x, t, params, kinetic):
+    v, m, c, C = params
+    t += dt / 2
+
+    # dt/2 D
+    p = p * np.exp(- 1/t * dt / 2)
+
+    # dt/2 B
+    p = p * np.exp(1/t * dt/2)
+    x = x * np.exp(-1/t * dt/2)
+
+    # dt/2 C
+    p = - example.gradf(x) * dt/2 + p
+
+    # dt A
+    if kinetic == 'Quartic':
+        x = 1/t * p ** (1 / 3) * dt + x
+
+    elif kinetic == 'Logaritmic':
+        x = -1/t * dt/p + x
+
+    elif kinetic == 'Quadratic':
+        x = 1/t * p * dt + x
+
+    else: # Relativistic
+        sq = np.sqrt(v ** 2 * m ** 2 + np.sum(p**2))
+        x = (1/t * v * p / sq) * dt + x
+
+    # dt/2 C
+    p = - example.gradf(x) * dt/2 + p
+
+    # dt/2 B
+    p = p * np.exp(1 / t * dt / 2)
+    x = x * np.exp(-1 / t * dt / 2)
+
+    # dt/2 D
+    p = p * np.exp(- 1/t * dt / 2)
+
+    # dt/2 t
+    t += dt / 2
+
+    return (p, x, t)
+
 
 
 def gradh(x, params):
@@ -190,15 +278,15 @@ def gradh(x, params):
     return m * x / np.sqrt(1 - np.dot(x, x) / v ** 2)
 
 
-def Breg(example, params, dt, steps, init, adap):
+def Breg(example, params, dt, steps, init, adap, new, kinetic):
     #parms = v,m,...
     x0, p0 = init
     tfinal = steps * dt
-    t0=1e-4
+    t0 = 1e-3
     tspan = np.linspace(t0, tfinal, steps)
 
-    p0 = gradh(x0, params)
-    #p0 = example.p0
+    #p0 = gradh(x0, params)
+    p0 = example.p0
     solp = np.empty([steps, *np.shape(p0)], dtype=np.float64)
     solx = np.empty([steps, *np.shape(x0)], dtype=np.float64)
 
@@ -210,82 +298,45 @@ def Breg(example, params, dt, steps, init, adap):
         x = np.copy(solx[i])
         t = tspan[i]
         if adap:
-            pnew, xnew, tnew = step_Br_adap(example, dt, p, x, t, params)
+            if new:
+                pnew, xnew, tnew = step_Br_adap_new(example, dt, p, x, t, params, kinetic)
+            else:
+                pnew, xnew, tnew = step_Br_adap(example, dt, p, x, t, params, kinetic)
         else:
-            pnew, xnew, tnew = step_Br(example, dt, p, x, t, params)
+            pnew, xnew, tnew = step_Br(example, dt, p, x, t, params, kinetic)
         solp[i + 1] = pnew
         solx[i + 1] = xnew
 
     return solx, solp
 
 
-# def tuning_process(method, ex, steps=200):
-#     '''
-#     In this function, we do the random parameter search for each method (CM, NAG, RGD, CRGD).
-#     '''
-#     min_f = 1e+16
-#     mu_new = 0
-#     dt_new = 0
-#     c_new = 0
-#     C_new = 0
-#     dt = np.linspace(1e-5, 0.1, 12)
-#     mu = np.linspace(0.8, 0.99, 5)
-#     c = np.linspace(1, 6, 7)
-#     C = np.linspace(1, 4, 5)
-#     m = 0.01
-#     v = 1000
+# C=1;c=2
+# tinit=0.001
+# dt=1e-5
+
+# for i in range(2000):
+#     T = np.exp(C) * tinit ** c
+#     arg = T + dt/2
+#     t = (np.exp(-C)*arg)**(1/c)
 #
-#     p0_t = -HBr(ex, ex.x0, ex.p0, ex.x0_t, c)  # np.zeros(q0.shape)
-#     init = [ex.x0, ex.x0_t, ex.p0, p0_t]
-#     if method == 'RB' or method == 'RB_adap':
-#         for i in range(len(c)):
-#             for j in range(len(C)):
-#                 for k in range(len(dt)):
-#                     if method == 'RB':
-#                         solX, solP = Breg(ex, [v, m, c[i], C[j]], dt[k], steps, [ex.x0, ex.p0], adap=False)
-#                     else:
-#                         solX, solP = Breg(ex, [v, m, c[i], C[j]], dt[k], steps, [ex.x0, ex.p0], adap=True)
-#                     f_sim = np.apply_along_axis(ex.f, 1, solX)
-#                     min_fnew = min(f_sim)
-#                     if min_fnew < min_f:
-#                         min_f = min_fnew
-#                         c_new = c[i]
-#                         dt_new = dt[k]
-#                         C_new = C[j]
+#     T = np.exp(C) * t ** c
+#     arg = T + dt / 2
+#     tend = (np.exp(-C) * arg) ** (1 / c)
+#     print(tend-tinit)
+#     tinit=tend
+#     #print(t)
+
+
+# for i in range(200):
+#     T = np.exp(tinit*c)
+#     arg = T + dt/2
+#     t = np.log(arg)/c
 #
-#     if method == 'HTVI_adap':
-#         for i in range(len(c)):
-#             for k in range(len(dt)):
-#                 solX = HTVI_adap(ex, c[i], dt[k], steps, init)
-#                 f_sim = np.apply_along_axis(ex.f, 1, solX)
-#                 min_fnew = min(f_sim)
-#                 if min_fnew < min_f:
-#                     min_f = min_fnew
-#                     c_new = c[i]
-#                     dt_new = dt[k]
-#     if method == 'Betancourt':
-#         for i in range(len(c)):
-#             for k in range(len(dt)):
-#                 solX = Bet_dir(ex, c[i], dt[k], steps, [ex.x0, ex.p0, p0_t])
-#                 f_sim = np.apply_along_axis(ex.f, 1, solX)
-#                 min_fnew = min(f_sim)
-#                 if min_fnew < min_f:
-#                     min_f = min_fnew
-#                     c_new = c[i]
-#                     dt_new = dt[k]
-#
-#     if method == 'CM' or 'NAG':
-#         for i in range(len(c)):
-#             for k in range(len(dt)):
-#                 solX = Bet_dir(ex, c[i], dt[k], steps, [ex.x0, ex.p0, p0_t])
-#                 f_sim = np.apply_along_axis(ex.f, 1, solX)
-#                 min_fnew = min(f_sim)
-#                 if min_fnew < min_f:
-#                     min_f = min_fnew
-#                     c_new = c[i]
-#                     dt_new = dt[k]
-#
-#     return mu_new, dt_new, c_new, C_new
+#     T = np.exp(t*c)
+#     arg = T + dt/2
+#     tend = np.log(arg)/c
+#     print(tend-tinit)
+#     tinit=np.copy(tend)
 
 
 

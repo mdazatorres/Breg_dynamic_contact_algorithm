@@ -1,5 +1,5 @@
 
-from sklearn.preprocessing import scale
+from sklearn.preprocessing import scale, StandardScaler
 import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 import matplotlib.pyplot as plt
@@ -9,49 +9,44 @@ from sklearn.model_selection import train_test_split
 import seaborn as sns
 
 #  Reading and cleaning the data
-cancer = pd.read_csv('data_breast_cancer.csv')
-#sns.heatmap(cancer.isnull(),cmap='Blues')
+cancer = pd.read_csv('data/data_breast_cancer.csv')
 cancer.drop('Unnamed: 32', axis=1, inplace=True)
 cancer.diagnosis = [1 if each == "M" else 0 for each in cancer.diagnosis]
-#plt.figure(figsize = (25, 10))
-#sns.heatmap(cancer.corr(),cmap='magma',linewidths=2,linecolor='black',annot=True)
-#sns.countplot(cancer['diagnosis'])
-
-#   Train Test Split
-Features = cancer[['radius_mean', 'texture_mean', 'perimeter_mean',
-       'area_mean', 'smoothness_mean', 'compactness_mean', 'concavity_mean',
-       'concave points_mean', 'symmetry_mean', 'fractal_dimension_mean',
-       'radius_se', 'texture_se', 'perimeter_se', 'area_se', 'smoothness_se',
-       'compactness_se', 'concavity_se', 'concave points_se', 'symmetry_se',
-       'fractal_dimension_se', 'radius_worst', 'texture_worst',
-       'perimeter_worst', 'area_worst', 'smoothness_worst',
-       'compactness_worst', 'concavity_worst', 'concave points_worst',
-       'symmetry_worst', 'fractal_dimension_worst']]
-
+prediction_feature = [ "radius_mean",  'perimeter_mean', 'area_mean', 'symmetry_mean', 'compactness_mean', 'concave points_mean']
+Features = cancer[prediction_feature]
 Label = cancer['diagnosis']
-
 X = Features
 y = Label
-Xtrain, Xtest, Ytrain, Ytest = train_test_split(X, y, test_size=0.33, random_state=0)
+
+def data_proccesing(test_size=0.25, valid_size=0.2, scale=True):
+    xx_train, Xtest, yy_train, Ytest = train_test_split(X, y, test_size=test_size, random_state=0)
+    Xtrain, Xvalid, Ytrain, Yvalid = train_test_split(xx_train, yy_train, test_size=valid_size, random_state=0)
+
+    sc = StandardScaler()
+    if scale:
+        Xtrain = sc.fit_transform(Xtrain)
+        Xtest = sc.fit_transform(Xtest)
+        Xvalid = sc.fit_transform(Xvalid)
+
+    m_train, n = Xtrain.shape
+    m_test, _ = Xtest.shape
+    m_valid, _ = Xvalid.shape
 
 
+    # n+1 variables
+    # for our example, we added an ones columns to the data
+    x1 = np.ones((m_train, 1))
+    x2 = np.ones((m_test, 1))
+    x3 = np.ones((m_valid, 1))
+
+    X_train = np.hstack((x1, Xtrain))
+    X_test = np.hstack((x2, Xtest))
+    X_valid = np.hstack((x3, Xvalid))
+    return X_train, X_test, X_valid, Ytrain, Yvalid, Ytest, n
 
 
-m_train, n = Xtrain.shape
-m_test, _ = Xtest.shape
-
-
-# n+1 variables
-# for our example, we added an ones columns to the data
-x1 = np.ones((m_train, 1))
-x2 = np.ones((m_test, 1))
-
-Xtrain = np.hstack((x1, Xtrain))
-Xtest = np.hstack((x2, Xtest))
-#alpha = 0.1
-
-
-alpha = 1e-10
+Xtrain, Xtest, Xvalid, Ytrain, Yvalid, Ytest, n =data_proccesing()
+alpha = 1e-1
 
 
 def sigma(w, x):

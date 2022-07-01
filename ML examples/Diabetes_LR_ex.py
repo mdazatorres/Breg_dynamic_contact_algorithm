@@ -1,47 +1,49 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import scale, StandardScaler
 from integrators import CM, NAG, RGD, CRGD
 import pandas as pd
 from sklearn.preprocessing import scale
 
-pima = pd.read_csv("datasets_228_482_diabetes.csv")
+pima = pd.read_csv("data/datasets_228_482_diabetes.csv")
 pima.head()
 
 array = pima.values
+
+
 X = array[1:, 0:-1]
-X = scale(X, with_std=0.5)
+#X = scale(X, with_std=0.5)
 y = array[1:, -1]
 
-# -- split X and y into training and testing sets --
+def data_proccesing(test_size=0.25, valid_size=0.2, scale=True):
+    xx_train, Xtest, yy_train, Ytest = train_test_split(X, y, test_size=test_size, random_state=0)
+    Xtrain, Xvalid, Ytrain, Yvalid = train_test_split(xx_train, yy_train, test_size=valid_size, random_state=0)
 
-# X_train, Xtest, y_train, Ytest = train_test_split(X, y, test_size=0.1499, random_state=0)
-# Xtrain, Xvalid, Ytrain, Yvalid = train_test_split(X_train, y_train, test_size=0.1763, random_state=0)
+    sc = StandardScaler()
+    if scale:
+        Xtrain = sc.fit_transform(Xtrain)
+        Xtest = sc.fit_transform(Xtest)
+        Xvalid = sc.fit_transform(Xvalid)
 
-X_train, Xtest, y_train, Ytest = train_test_split(X, y, test_size=0.25, random_state=0)
-Xtrain, Xvalid, Ytrain, Yvalid = train_test_split(X_train, y_train, test_size=0.2, random_state=0)
-
-
-
-#Xtrain, Xtest, Ytrain, Ytest = train_test_split(X, y, test_size=0.25, random_state=0)
-
-
-
-m_train, n = Xtrain.shape
-m_test, _ = Xtest.shape
-m_valid, _ = Xvalid.shape
-
-# n+1 variables
-# for our example, we added an ones columns to the data
-x1 = np.ones((m_train, 1))
-x2 = np.ones((m_test, 1))
-x3 = np.ones((m_valid, 1))
-Xtrain = np.hstack((x1, Xtrain))
-Xtest = np.hstack((x2, Xtest))
-Xvalid = np.hstack((x3, Xvalid))
-alpha = 0.1
+    m_train, n = Xtrain.shape
+    m_test, _ = Xtest.shape
+    m_valid, _ = Xvalid.shape
 
 
+    # n+1 variables
+    # for our example, we added an ones columns to the data
+    x1 = np.ones((m_train, 1))
+    x2 = np.ones((m_test, 1))
+    x3 = np.ones((m_valid, 1))
+
+    X_train = np.hstack((x1, Xtrain))
+    X_test = np.hstack((x2, Xtest))
+    X_valid = np.hstack((x3, Xvalid))
+    return X_train, X_test, X_valid, Ytrain, Yvalid, Ytest, n
+
+Xtrain, Xtest, Xvalid, Ytrain, Yvalid, Ytest, n =data_proccesing()
+alpha=1e-1
 def sigma(w, x):
     z = np.dot(x, w)
     return 1/(1 + np.exp(-z))

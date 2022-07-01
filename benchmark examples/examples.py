@@ -1,12 +1,69 @@
 import numpy as np
 from scipy.stats import ortho_group
 
-class Example1: # Quartic function 1
+
+
+class Ex_Quadratic:
+    def __init__(self, n):
+        self.n = n
+        np.random.seed(0)
+        self.Q = ortho_group.rvs(dim=self.n)
+        self.S = np.diag(np.random.uniform(10e-3, 1, self.n))
+        self.A = np.dot(np.dot(self.Q, self.S), self.Q.T)
+
+        self.p0 = np.zeros(self.n)
+        self.x0 = np.ones(self.n)
+        self.x0_t = 0.01
+        self.s0 = 0
+        self.y0 = np.random.rand(self.n)
+        self.z0 = np.random.rand(self.n)
+        #self.t0 = 0
+
+    def f(self, x):
+        return 0.5 * np.dot(np.dot(x, self.A), x)
+
+    def gradf(self, x):
+        return np.dot(x, self.A)
+
+    def f2D(self, x1, x2):
+        return 0.5*(self.A[0][0] * x1 ** 2 + self.A[1][0] * x1 * x2 + self.A[0][1] * x1 * x2 + self.A[1][1] * x2 ** 2)
+
+
+class Ex_Corr_Quadratic:  # Correlated quadratic function
+    def __init__(self, n):
+        self.n = n
+        #self.seed = seed
+        np.random.seed(0)
+
+        self.B = [[np.sqrt((i + 1) * (j + 1)) / 2 ** (abs(i - j)) for i in range(self.n)] for j in range(self.n)]
+        self.p0 = np.zeros(self.n)
+        self.x0 = np.random.uniform(-1, 1, self.n)
+        self.s0 = 0
+        self.x0_t = 0.01
+
+    def f(self, x):
+        return 0.5 * np.dot(np.dot(x, self.B), x)
+
+    def gradf(self, x):
+        return np.dot(x, self.B)
+
+    def Hessf(self,x):
+        return self.B
+
+    def f2D(self, x1, x2):
+        return 0.5*(self.B[0][0] * x1 ** 2 + self.B[1][0] * x1 * x2 + self.B[0][1] * x1 * x2 + self.B[1][1] * x2 ** 2)
+
+
+
+
+class Ex_Quartic_1: # Quartic function 1
     def __init__(self, n):
         self.n = n
         self.p0 = np.zeros(self.n)
-        self.x0 = np.zeros(self.n)
+        np.random.seed(0)
+        self.x0 = np.random.rand(self.n)
         self.s0 = 0
+        self.x0_t = 0.01
         xc = np.linspace(1, n, n)
         xv, yv = np.meshgrid(xc, xc)
         self.sigma = 0.9 ** (abs(xv-yv))
@@ -24,11 +81,12 @@ class Example1: # Quartic function 1
         return (sigma[0][0]*(x1-1)**2 + sigma[0][1]*(x1-1)*(x2-1) + sigma[1][1]*(x2-1)**2)**2
 
 
-class Example2:  # Quartic function 2
+class Ex_Quartic_2:  # Quartic function
     def __init__(self, n=50):
         self.n = n
         self.p0 = np.zeros(self.n)
         self.x0 = 2 * np.ones(self.n)
+        self.x0_t = 0.01
         self.s0 = 0
         self.t0 = 0
 
@@ -44,11 +102,31 @@ class Example2:  # Quartic function 2
     def f2D(self, x1, x2):
         return x1 ** 4 + 2 * x2 ** 4
 
-class Example3: # Schwefel function:
+
+class Ex_Booth:
+    def __init__(self,  n):
+        self.n = n
+        self.p0 = np.array([0, 0])
+        self.x0 = np.array([10, 10])
+        self.s0 = 0
+        self.x0_t = 0.01
+
+    def f(self, x):
+        return (x[0] + 2 * x[1] - 7) ** 2 + (2 * x[0] + x[1] - 5) ** 2
+
+    def gradf(self, x):
+        return np.array([10 * x[0] + 8 * x[1] - 34, 8 * x[0] + 10 * x[1] - 38])
+
+    def f2D(self, x1, x2):
+        return (x1 + 2 * x2 - 7) ** 2 + (2 * x1 + x2 - 5) ** 2
+
+
+class Ex_Schwefel:# Schwefel function:
     def __init__(self, n=20):
         self.n = n
         self.p0 = np.zeros(self.n)
         self.x0 = 2 * np.ones(self.n)
+        self.x0_t = 0.01
         self.s0 = 0
         self.t0 = 0
 
@@ -62,13 +140,14 @@ class Example3: # Schwefel function:
     def f2D(self, x1, x2):
         return x1 ** 10 + x2 ** 10
 
-class Example4:  # Matyas function
+class Ex_Matyas:  # Matyas function
     def __init__(self):
         self.n = 2
         # self.seed = seed
         # x0= np.array([10, -7])
         self.p0 = np.zeros(self.n)
         self.x0 = np.array([10, -7])
+        self.x0_t = 0.01
         self.s0 = 0
         self.t0 = 0
 
@@ -82,13 +161,14 @@ class Example4:  # Matyas function
         return 0.26 * (x1**2 + x2**2) - 0.48 * x1 * x2
 
 
-class Example5:  # Beale function
+class Ex_Beale:  # Beale function
     def __init__(self):
         self.n = 2
         # self.seed = seed
         # x0= np.array([10, -7])
         self.p0 = np.zeros(self.n)
         self.x0 = np.array([-3, -3])
+        self.x0_t = 0.01
         self.s0 = 0
         self.t0 = 0
 
@@ -107,11 +187,12 @@ class Example5:  # Beale function
     def f2D(self, x1, x2):
         return (1.5-x1 + x1*x2)**2 + (2.25-x1 + x1 * x2**2)**2 + (2.625 - x1 + x1*x2**3)**2
 
-class Example6:  # Chung.Reynolds funcion
+class Ex_Chung_Reynolds:  # Chung.Reynolds funcion
     def __init__(self, n=50):
         self.n = n
         self.p0 = np.zeros(self.n)
         self.x0 = 50 * np.ones(self.n)
+        self.x0_t = 0.01
         self.s0 = 0
         self.t0 = 0
 
@@ -126,11 +207,12 @@ class Example6:  # Chung.Reynolds funcion
         return (x1 ** 2 +  x2 ** 2)**2
 
 
-class Example7:  # Zakharov
+class Ex_Zakharov:  # Zakharov
     def __init__(self, n=5):
         self.n = n
         self.p0 = np.zeros(self.n)
         self.x0 = np.ones(self.n)
+        self.x0_t = 0.01
         self.s0 = 0
         self.t0 = 0
 
@@ -147,13 +229,14 @@ class Example7:  # Zakharov
         return (x1 ** 2 + x2 ** 2) + (0.5*(x1 ** 2 + 2*x2 ** 2))**2 + (0.5*(x1 ** 2 + 2*x2 ** 2))**4
 
 
-class Example8:  # Three-hump
+class Ex_Three_hump:  # Three-hump
     def __init__(self):
         self.n = 2
         # self.seed = seed
         # x0= np.array([10, -7])
         self.p0 = np.zeros(self.n)
         self.x0 = np.array([5, 5])
+        self.x0_t = 0.01
         self.s0 = 0
         self.t0 = 0
 
@@ -170,6 +253,5 @@ class Example8:  # Three-hump
         return np.array([gradx, grady])
 
     def f2D(self, x1, x2):
-        return 2* x1**2 - 1.05 * x1**4 + x1**6 / 6 + x1 * x2+ x1**2
+        return 2 * x1**2 - 1.05 * x1**4 + x1**6 / 6 + x1 * x2+ x1**2
 
-# Three-hump

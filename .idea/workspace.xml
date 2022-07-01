@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="5be146f6-0571-4148-8c01-4f64e0fd884c" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/Breg_dynamic_contact transform.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ML examples/Breast_cancer_results.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ML examples/Breast_cancer_validation_process.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ML examples/figures/ex_cancer_error_test.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ML examples/figures/ex_cancer_error_training.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ML examples/figures/ex_cancer_lossf_test.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ML examples/figures/ex_cancer_lossf_training.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ML examples/figures/ex_glucosa_error_test.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ML examples/figures/ex_glucosa_error_training.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ML examples/figures/ex_glucosa_lossf_test.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ML examples/figures/ex_glucosa_lossf_training.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/benchmark examples/.ipynb_checkpoints/SM Examples-checkpoint.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/benchmark examples/Bregman Examples.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/benchmark examples/SM Examples.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/benchmark examples/figures/ex_comp_Corr_Quadratic.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/benchmark examples/figures/ex_comp_Quadratic.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/benchmark examples/figures/ex_comp_Quartic.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/benchmark examples/figures/ex_comp_Three hump.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/benchmark examples/plot_article_exs.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/benchmark examples/plot_ex.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ML examples/Diabetes example/data_breast_cancer.csv" beforeDir="false" afterPath="$PROJECT_DIR$/ML examples/data/data_breast_cancer.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ML examples/Diabetes example/datasets_228_482_diabetes.csv" beforeDir="false" afterPath="$PROJECT_DIR$/ML examples/data/datasets_228_482_diabetes.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ML examples/Diabetes example/example_breast_cancer_LR.py" beforeDir="false" afterPath="$PROJECT_DIR$/ML examples/Breast_cancer_LR_ex.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ML examples/Diabetes example/example_diabetes_LR.py" beforeDir="false" afterPath="$PROJECT_DIR$/ML examples/Diabetes_LR_ex.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ML examples/Diabetes example/integrators.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ML examples/Diabetes example/integrators_Breg.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ML examples/Diabetes example/plot_results_Breast_cancer.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ML examples/Diabetes example/plot_results_diabetes.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ML examples/Diabetes example/validation_process_breast_cancer.py" beforeDir="false" afterPath="$PROJECT_DIR$/ML examples/Diabetes_validation_process.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ML examples/Diabetes example/validation_process_diabetes.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/notebook examples/.ipynb_checkpoints/Bregman Examples-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/benchmark examples/.ipynb_checkpoints/Bregman Examples-checkpoint.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/notebook examples/.ipynb_checkpoints/Bregman Examples_mod-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/benchmark examples/.ipynb_checkpoints/Bregman Examples_mod-checkpoint.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/notebook examples/.ipynb_checkpoints/Bregman Examples_relativistic-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/benchmark examples/.ipynb_checkpoints/Bregman Examples_relativistic-checkpoint.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/notebook examples/Bregman Examples.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/notebook examples/examples.py" beforeDir="false" afterPath="$PROJECT_DIR$/benchmark examples/examples.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/notebook examples/integrators.py" beforeDir="false" afterPath="$PROJECT_DIR$/benchmark examples/integrators.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/notebook examples/plot_ex.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/notebook examples/tunning_procces.py" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="25RVLGV4BQ3bg7K9l2PmKDmWZdA" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+    <option name="showMembers" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="5be146f6-0571-4148-8c01-4f64e0fd884c" name="Default Changelist" comment="" />
+      <created>1645489831729</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1645489831729</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+</project>
