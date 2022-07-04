@@ -17,7 +17,7 @@ class Ex_Quadratic:
         self.s0 = 0
         self.y0 = np.random.rand(self.n)
         self.z0 = np.random.rand(self.n)
-        #self.t0 = 0
+
 
     def f(self, x):
         return 0.5 * np.dot(np.dot(x, self.A), x)
