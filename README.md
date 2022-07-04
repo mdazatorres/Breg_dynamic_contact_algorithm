@@ -20,4 +20,3 @@ Auxiliary function to plot in the jupyter notebook SM Examples.ipynb
 
 #### SM Examples.ipynb
 Jupyter notebook with several examples to show the RB's performance against other recent approaches.
-![image](https://user-images.githubusercontent.com/39836676/177205519-c584e270-0032-40ab-b3b1-d80c1cbe6cb7.png)
