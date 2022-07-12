@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import scale, StandardScaler
-from integrators import CM, NAG, RGD, CRGD
+from integrators import CM, NAG
 import pandas as pd
 from sklearn.preprocessing import scale
 

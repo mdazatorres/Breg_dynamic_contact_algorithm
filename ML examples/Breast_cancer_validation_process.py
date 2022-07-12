@@ -1,8 +1,8 @@
 import numpy as np
 from sklearn.model_selection import train_test_split
-from integrators import CM, NAG
+from integrators import CM, NAG,Breg
 from Breast_cancer_LR_ex import gradLp, Lp, loss_func_test, n, Xtrain, Ytrain, Xvalid, Yvalid
-from integrators_Breg import Breg
+
 
 
 def init_sample(num_trials):

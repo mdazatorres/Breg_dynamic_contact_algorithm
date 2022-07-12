@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.stats import ortho_group
 
-
+#Breg_dynamic_contact_transf
 
 class Ex_Quadratic:
     def __init__(self, n):
@@ -17,6 +17,11 @@ class Ex_Quadratic:
         self.s0 = 0
         self.y0 = np.random.rand(self.n)
         self.z0 = np.random.rand(self.n)
+
+        self.x0_ = 0.5*np.ones(self.n)
+        self.p0_ = np.random.rand(self.n)
+        self.t0 = 0.01
+        self.t0_ = 0.02
 
 
     def f(self, x):
@@ -41,6 +46,11 @@ class Ex_Corr_Quadratic:  # Correlated quadratic function
         self.s0 = 0
         self.x0_t = 0.01
 
+        self.x0_ = np.random.uniform(-1, 1, self.n)
+        self.p0_ = np.random.rand(self.n)
+        self.t0 = 0.01
+        self.t0_ = 0.02
+
     def f(self, x):
         return 0.5 * np.dot(np.dot(x, self.B), x)
 
@@ -64,6 +74,12 @@ class Ex_Quartic_1: # Quartic function 1
         self.x0 = np.random.rand(self.n)
         self.s0 = 0
         self.x0_t = 0.01
+
+        self.p0_ = np.random.rand(self.n)
+        self.x0_ = np.random.rand(self.n)
+        self.t0 = 0.01
+        self.t0_ = 0.02
+
         xc = np.linspace(1, n, n)
         xv, yv = np.meshgrid(xc, xc)
         self.sigma = 0.9 ** (abs(xv-yv))
@@ -90,6 +106,11 @@ class Ex_Quartic_2:  # Quartic function
         self.s0 = 0
         self.t0 = 0
 
+        self.p0_ = np.random.rand(self.n)
+        self.x0_ = np.ones(self.n)
+        self.t0 = 0.01
+        self.t0_ = 0.02
+
     def f(self, x):
         seq = np.arange(1, self.n + 1)
         return np.dot(seq, x ** 4)
@@ -111,6 +132,11 @@ class Ex_Booth:
         self.s0 = 0
         self.x0_t = 0.01
 
+        self.p0_ = np.random.rand(self.n)
+        self.x0_ = np.random.rand(self.n)
+        self.t0 = 0.01
+        self.t0_ = 0.02
+
     def f(self, x):
         return (x[0] + 2 * x[1] - 7) ** 2 + (2 * x[0] + x[1] - 5) ** 2
 
@@ -129,6 +155,11 @@ class Ex_Schwefel:# Schwefel function:
         self.x0_t = 0.01
         self.s0 = 0
         self.t0 = 0
+
+        self.p0_ = np.random.rand(self.n)
+        self.x0_ = np.random.rand(self.n)
+        self.t0 = 0.01
+        self.t0_ = 0.02
 
     def f(self, x):
         return np.sum(x ** 10)
@@ -151,6 +182,11 @@ class Ex_Matyas:  # Matyas function
         self.s0 = 0
         self.t0 = 0
 
+        self.p0_ = np.random.rand(self.n)
+        self.x0_ = np.random.rand(self.n)
+        self.t0 = 0.01
+        self.t0_ = 0.02
+
     def f(self, x):
         return 0.26 * (x[0]**2 + x[1]**2) - 0.48 * x[0] * x[1]
 
@@ -171,6 +207,11 @@ class Ex_Beale:  # Beale function
         self.x0_t = 0.01
         self.s0 = 0
         self.t0 = 0
+
+        self.p0_ = np.random.rand(self.n)
+        self.x0_ = np.random.rand(self.n)
+        self.t0 = 0.01
+        self.t0_ = 0.02
 
     def f(self, x):
         return (1.5-x[0] + x[0]*x[1])**2 + (2.25-x[0] + x[0] * x[1]**2)**2 + (2.625 - x[0] + x[0]*x[1]**3)**2
@@ -196,6 +237,11 @@ class Ex_Chung_Reynolds:  # Chung.Reynolds funcion
         self.s0 = 0
         self.t0 = 0
 
+        self.p0_ = np.random.rand(self.n)
+        self.x0_ = np.random.rand(self.n)
+        self.t0 = 0.01
+        self.t0_ = 0.02
+
     def f(self, x):
         return np.sum(x ** 2)**2
 
@@ -215,6 +261,11 @@ class Ex_Zakharov:  # Zakharov
         self.x0_t = 0.01
         self.s0 = 0
         self.t0 = 0
+
+        self.p0_ = np.random.rand(self.n)
+        self.x0_ = np.random.rand(self.n)
+        self.t0 = 0.01
+        self.t0_ = 0.02
 
     def f(self, x):
         seq = np.arange(1, self.n + 1)
@@ -239,6 +290,11 @@ class Ex_Three_hump:  # Three-hump
         self.x0_t = 0.01
         self.s0 = 0
         self.t0 = 0
+
+        self.p0_ = np.random.rand(self.n)
+        self.x0_ = np.random.rand(self.n)
+        self.t0 = 0.01
+        self.t0_ = 0.02
 
     def f(self, x):
         return 2* x[0]**2 - 1.05 * x[0]**4 + x[0]**6 / 6 + x[0] * x[1] + x[1]**2

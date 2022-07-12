@@ -1,4 +1,5 @@
 from integrators import Breg, NAG, CM, HTVI_adap, HTVI_d,Bet_dir
+from integratorFJ import FJ
 import numpy as np
 import matplotlib.pyplot as plt
 import pylab
@@ -6,8 +7,8 @@ import pylab
 plt.rcParams['font.size'] = 18
 
 def eval_fun(method, params, dt, steps, ex, init):
-    x0, x0_t, p0, p0_t = init
-    v, m, c, C, mu = params
+    x0, x0_t, x0_, p0, p0_t, p0_, t0, t0_ = init
+    v, m, c, C, mu, e = params
     if method == 'RB':  # Bregman Relativistic
         solX, solP = Breg(ex, [v, m, c, C], dt, steps, [x0, p0], adap=False,new=False, kinetic='Relativistic')
         fsol = np.apply_along_axis(ex.f, 1, solX)
@@ -31,7 +32,12 @@ def eval_fun(method, params, dt, steps, ex, init):
         label = method
 
     elif method == 'HTVI_adap':
-        solX = HTVI_adap(ex, c, dt, steps, init)
+        solX = HTVI_adap(ex, c, dt, steps, [x0, x0_t, p0, p0_t])
+        fsol = np.apply_along_axis(ex.f, 1, solX)
+        label = method
+
+    elif method == 'FJ_R':
+        solX = FJ(ex, dt, [v, m, c, C, e], steps, [x0, x0_, p0, p0_, t0, t0_])
         fsol = np.apply_along_axis(ex.f, 1, solX)
         label = method
 
@@ -59,8 +65,12 @@ def eval_fun(method, params, dt, steps, ex, init):
 
 
 def plot_order(method, color, marker, params, dt, steps, ex, init):
-    x0, x0_t, p0, p0_t = init
-    v, m, c, C, mu = params
+    #x0, x0_t, p0, p0_t = init
+    x0, x0_t, x0_, p0, p0_t, p0_, t0, t0_ = init
+
+    #initFJ = [x0, x0_, p0, p0_, t0, t0_]
+    #v, m, c, C, mu = params
+    v, m, c, C, mu, e = params
     if method == 'RB':  # Bregman Relativistic
         solX, solP = Breg(ex, [v, m, c, C], dt, steps, [x0, p0], adap=False, new=False, kinetic='Relativistic')
         fsol = np.apply_along_axis(ex.f, 1, solX)
@@ -96,12 +106,17 @@ def plot_order(method, color, marker, params, dt, steps, ex, init):
         label = method
 
     elif method == 'HTVI_adap':
-        solX = HTVI_adap(ex, c, dt, steps, init)
+        solX = HTVI_adap(ex, c, dt, steps, [x0, x0_t, p0, p0_t])
         fsol = np.apply_along_axis(ex.f, 1, solX)
         label = method
 
     elif method == 'HTVI_d':
-        solX = HTVI_d(ex, c, dt, steps, init)
+        solX = HTVI_d(ex, c, dt, steps, [x0, x0_t, p0, p0_t])
+        fsol = np.apply_along_axis(ex.f, 1, solX)
+        label = method
+
+    elif method =='FJ':
+        solX = FJ(ex, dt, [v, m, c, C, e], steps, [x0, x0_, p0, p0_, t0, t0_])
         fsol = np.apply_along_axis(ex.f, 1, solX)
         label = method
 

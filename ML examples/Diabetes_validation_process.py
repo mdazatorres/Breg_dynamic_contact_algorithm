@@ -1,7 +1,6 @@
 import numpy as np
 from sklearn.model_selection import train_test_split
-from integrators_Breg import Breg
-from integrators import CM, NAG
+from integrators import CM, NAG,Breg
 from Diabetes_LR_ex import gradLp, Lp, loss_func_test, n, Xvalid, Yvalid
 
 
