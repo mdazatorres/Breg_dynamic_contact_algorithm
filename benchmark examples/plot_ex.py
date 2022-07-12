@@ -1,5 +1,4 @@
-from integrators import Breg, NAG, CM, HTVI_adap, HTVI_d,Bet_dir
-from integratorFJ import FJ
+from integrators import Breg, NAG, CM, HTVI_adap, HTVI_d, Bet_dir, FJ
 import numpy as np
 import matplotlib.pyplot as plt
 import pylab

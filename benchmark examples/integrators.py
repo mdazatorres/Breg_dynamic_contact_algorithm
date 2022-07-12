@@ -136,6 +136,107 @@ def ea(c, t):
 def eb(t, c, C):
     return np.exp(C) * t ** c
 
+def eg(t, c, C):
+    return t ** c
+
+def eg1(t, c, C):
+    return 1/eg(t, c, C)
+
+
+def Hx(t, x, p, gradf, params, c, C):
+    v, m = params
+    n = x.shape[0]
+    sq = np.sqrt(1 - np.sum(x ** 2) / v ** 2)
+
+    diagA = m / sq + m * x ** 2 / (sq ** 3 * v ** 2)  # Aii
+    Aij = m * np.prod(x) / (sq ** 3 * v ** 2)           # Aij
+
+    A = Aij * np.ones((n, n))
+    np.fill_diagonal(A, diagA)
+
+    arg1 = eg1(t, c, C) * p + m * x / sq  # vector
+    arg2 = np.sqrt(np.sum((eg1(t, c, C) * p + m * x / sq) ** 2) + v ** 2 * m ** 2)
+    arg3 = v ** 3 * m * x / np.sqrt(v ** 2 - np.sum(x ** 2))**3
+    arg4 = - eg1(t, c, C) * p + eb(t, c, C) * gradf(x)
+    return (v / arg2 * A @ arg1 - arg3 + arg4) * ea(c, t) * eg(t, c, C)
+
+
+def Hp(t, x, p, params, c, C):
+    v, m = params
+    sq = np.sqrt(1 - np.sum(x ** 2) / v ** 2)
+    arg1 = eg1(t, c, C) * p + m * x / sq
+    arg2 = np.sum(arg1 ** 2) + v ** 2 * m ** 2
+
+    return ea(c, t) * (v * arg1 / np.sqrt(arg2) - x)
+
+
+def step_FJ(example, dt, p, p_, x, x_, t, t_, params):
+    v, m, c, C, e = params
+    #C = 1
+    # dt/2 A
+    p = p - dt/2 * Hx(t, x, p_, example.gradf, [v, m], c, C)
+    t_ = t_ + dt/2
+    x_ = x_ + dt/2 * Hp(t, x, p_, [v, m], c, C)
+
+    # dt/2 B
+    t = t + dt/2
+    x = x + dt/2 * Hp(t_, x_, p, [v, m], c, C)
+    p_ = p_ - dt/2 * Hx(t_, x_, p, example.gradf, [v, m], c, C)
+
+    # dt C
+    x = 0.5 * (x + x_ + np.cos(2 * e * dt) * (x - x_) + np.sin(2 * e * dt) * (p - p_))
+    p = 0.5 * (p + p_ - np.sin(2 * e * dt) * (x - x_) + np.cos(2 * e * dt) * (p - p_))
+    x_ = 0.5 * (x + x_ - np.cos(2 * e * dt) * (x - x_) - np.sin(2 * e * dt) * (p - p_))
+    p_ = 0.5 * (p + p_ + np.sin(2 * e * dt) * (x - x_) - np.cos(2 * e * dt) * (p - p_))
+
+    # dt/2 B
+    t = t + dt / 2
+    x = x + dt / 2 * Hp(t_, x_, p, [v,m], c, C)
+    p_ = p_ - dt / 2 * Hx(t_, x_, p, example.gradf, [v,m], c, C)
+
+    # dt/2 A
+    p = p - dt / 2 * Hx(t, x, p_, example.gradf, [v,m], c, C)
+    t_ = t_ + dt / 2
+    x_ = x_ + dt/2 * Hp(t, x, p_, [v,m], c, C)
+    return x, x_, p, p_, t, t_
+
+
+def FJ(example, dt, params, steps, init):
+    x0, x0_, p0, p0_, t0, t0_ = init
+    ttol = 1e-13
+    tfinal = steps * dt
+
+    tspan = np.linspace(t0, tfinal, steps)
+    tspan_ = np.linspace(t0_, tfinal, steps)
+
+    solp = np.empty([steps, *np.shape(p0)], dtype=np.float64)
+    solx = np.empty([steps, *np.shape(x0)], dtype=np.float64)
+
+    solp_ = np.empty([steps, *np.shape(p0_)], dtype=np.float64)
+    solx_ = np.empty([steps, *np.shape(x0_)], dtype=np.float64)
+    solp[0] = p0
+    solx[0] = x0
+    solp_[0] = p0_
+    solx_[0] = x0_
+
+    for i in range(steps - 1):
+        p = np.copy(solp[i])
+        x = np.copy(solx[i])
+        p_ = np.copy(solp[i])
+        x_ = np.copy(solx[i])
+        t = tspan[i]
+        t_ = tspan_[i]
+
+        xnew, xnew_, pnew, pnew_, tnew, tnew_ = step_FJ(example, dt, p, p_, x, x_, t, t_, params)
+        if abs(tnew - t - dt) > ttol:
+            warnings.warn(f"tnew-t-dt, dt inconsistency: {tnew - t - dt}, {dt}")
+        solp[i + 1] = pnew
+        solx[i + 1] = xnew
+        solp_[i + 1] = pnew_
+        solx_[i + 1] = xnew_
+    return solx
+
+
 
 def step_Br(example, dt, p, x, t, params, kinetic):
     v, m, c, C = params
