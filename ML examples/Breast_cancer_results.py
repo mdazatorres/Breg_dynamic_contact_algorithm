@@ -4,7 +4,7 @@ from integrators import CM, NAG, Breg
 from Breast_cancer_LR_ex import gradLp, Lp, loss_func_test, n, Xtrain, Ytrain
 
 
-plt.rcParams['font.size'] = 30
+plt.rcParams['font.size'] = 20
 max_ite = 200
 steps = max_ite
 num_trials = 10
@@ -55,27 +55,30 @@ def results(num_trials, steps, method, kinetic):
     return Loss, Losst, E, Et
 
 
-def plot_r(a, color, marker, fillstyle, markevery, method):
+def plot_r(a, color, marker, fillstyle, markevery, method, ax):
     a_mean = np.mean(a, axis=0)
     a_q25 = np.quantile(a, .025, axis=0)
     a_q90 = np.quantile(a, .975, axis=0)
-
-    plt.plot(a_mean, lw=2, color=color, marker=marker,markeredgewidth=2, fillstyle=fillstyle, markevery=markevery, markersize=14,label=method,)
+    xx=np.arange(len(a_mean))+1
+    #xx[0]=1
+    ax.loglog(xx, a_mean, color=color,lw=2, marker=marker,markeredgewidth=2, fillstyle=fillstyle, markevery=markevery, markersize=16,label=method,)
+    ax.fill_between(np.arange(len(a_mean))+1, a_q25, a_q90, color=color, alpha=0.1)
     #plt.fill_between(np.arange(len(a_mean)), a_q25, a_q90, color=color, alpha=0.1)
+
 
 
 def plot_results(L_CM, L_NAG, L_EB, L_RB, ylabel, save,title):
 #def plot_results(L_EB, L_RB, ylabel, save, title):
     markevery=30
-    plt.figure(figsize=(10, 7))
-    plot_r(L_CM, color='b', marker='D', fillstyle='none', markevery=markevery, method='CM')
-    plot_r(L_NAG, color='r', marker='o', fillstyle='none', markevery=markevery, method='NAG')
-    plot_r(L_EB, color='g', marker='s', fillstyle='none', markevery=markevery, method='EB')
-    plot_r(L_RB, color='black', marker='<', fillstyle='none', markevery=markevery, method='RB')
+    fig, ax = plt.subplots(figsize=(10, 7))
+    plot_r(L_CM, color='b', marker='D', fillstyle='none', markevery=markevery, method='CM',ax=ax)
+    plot_r(L_NAG, color='r', marker='o', fillstyle='none', markevery=markevery, method='NAG',ax=ax)
+    plot_r(L_EB, color='g', marker='s', fillstyle='none', markevery=markevery, method='EB',ax=ax)
+    plot_r(L_RB, color='black', marker='<', fillstyle='none', markevery=markevery, method='RB',ax=ax)
     #plt.xticks([0, 4, 8, 12, 16, 20])
-    plt.xlabel('Iterations')
-    plt.ylabel(ylabel)
-    plt.legend()
+    ax.set_xlabel('Iterations',fontsize=25)
+    ax.set_ylabel(ylabel,fontsize=25)
+    ax.legend(fontsize=25)
 
     plt.tight_layout()
     if save:

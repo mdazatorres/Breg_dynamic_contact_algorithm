@@ -76,9 +76,9 @@ def plot_results(L_CM, L_NAG, L_EB, L_RB, ylabel, save, title):
     plot_r(L_NAG, color='r', marker='o', fillstyle='none', markevery=markevery, method='NAG',ax=ax)
     plot_r(L_EB, color='g', marker='s', fillstyle='none', markevery=markevery, method='EB',ax=ax)
     plot_r(L_RB, color='black', marker='<', fillstyle='none', markevery=markevery, method='RB',ax=ax)
-    ax.set_xlabel('Iterations')
-    ax.set_ylabel(ylabel)
-    ax.legend()
+    ax.set_xlabel('Iterations',fontsize=25)
+    ax.set_ylabel(ylabel,fontsize=25)
+    ax.legend(fontsize=25)
 
     fig.tight_layout()
     if save:
@@ -91,9 +91,9 @@ L_EB, Lt_EB, E_EB, Et_EB = results(num_trials, steps, Breg, kinetic='Quadratic')
 L_RB, Lt_RB, E_RB, Et_RB = results(num_trials, steps,  Breg, kinetic='Relativistic')
 
 
-#plot_results(L_CM, L_NAG, L_EB, L_RB, ylabel='Loss function', save=True,title='lossf_training')
+plot_results(L_CM, L_NAG, L_EB, L_RB, ylabel='Loss function', save=True,title='lossf_training')
 plot_results(Lt_CM, Lt_NAG, Lt_EB, Lt_RB, ylabel='Loss function', save=True,title='lossf_test')
-#plot_results(E_CM, E_NAG, E_EB, E_RB, ylabel='Classification error', save=True,title='error_training')
+plot_results(E_CM, E_NAG, E_EB, E_RB, ylabel='Classification error', save=True,title='error_training')
 plot_results(Et_CM, Et_NAG, Et_EB, Et_RB, ylabel='Classification error', save=True,title='error_test')
 
 
